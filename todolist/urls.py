@@ -5,6 +5,7 @@ from todo.views import *
 
 router = routers.SimpleRouter()
 router.register(r'todo', TodoViewSet)
+router.register(r'cat', CategoryViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
