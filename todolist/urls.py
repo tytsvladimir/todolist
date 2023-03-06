@@ -3,7 +3,7 @@ from django.urls import path, include
 from rest_framework import routers
 from todo.views import *
 
-router = routers.SimpleRouter()
+router = routers.DefaultRouter()
 router.register(r'todo', TodoViewSet)
 router.register(r'cat', CategoryViewSet)
 
