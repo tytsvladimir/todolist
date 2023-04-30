@@ -1,26 +1,27 @@
-from rest_framework import generics, viewsets
+from rest_framework import viewsets, status
+from rest_framework.response import Response
 
-from .models import Todo, Category
-from .serializers import TodoSerializer, CategorySerializer
-
-
-class TodoViewSet(viewsets.ModelViewSet):
-    queryset = Todo.objects.all()
-    serializer_class = TodoSerializer
+from .models import Category, Task
+from .serializers import CategorySerializer, TaskSerializer
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
-# class TodoAPIListView(generics.ListCreateAPIView):
-#     queryset = Todo.objects.all()
-#     serializer_class = TodoSerializer
-#
-#
-# class TodoAPIUpdateView(generics.UpdateAPIView):
-#     queryset = Todo.objects.all()
-#     serializer_class = TodoSerializer
-#
-# class TodoAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = Todo.objects.all()
-#     serializer_class = TodoSerializer
+    def get_queryset(self):
+        user = self.request.user
+        return Category.objects.filter(user=user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class TaskViewSet(viewsets.ModelViewSet):
+    serializer_class = TaskSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Task.objects.filter(category__user=user)
+
+    def perform_create(self, serializer):
+        category_id = self.request.data.get('category')
+        category = Category.objects.get(id=category_id, user=self.request.user)
+        serializer.save(category=category)

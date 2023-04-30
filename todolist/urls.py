@@ -1,14 +1,14 @@
-from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from todo.views import *
+from todo.views import CategoryViewSet, TaskViewSet
+from django.views.generic.base import RedirectView
 
 router = routers.DefaultRouter()
-router.register(r'todo', TodoViewSet)
-router.register(r'cat', CategoryViewSet)
+router.register(r'categories', CategoryViewSet, basename='categories')
+router.register(r'tasks', TaskViewSet, basename='tasks')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls')),
-    path('api/v1/', include(router.urls)),
+    path('', RedirectView.as_view(url='api/')),
+    path('api/', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
